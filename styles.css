@@ -31,19 +31,32 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Parallax background layer */
-body::before {
-  content: "";
+#bg-stack {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    linear-gradient(0deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-    url('BMW_M_Wallpaper_3.0_CSL_rear_Desktop.jpg') center / cover no-repeat;
-  transform: translate3d(var(--tx), var(--ty), 0) scale(1.06);
+  overflow: hidden;
+  pointer-events: none;
+  transform: translate3d(var(--tx), var(--ty), 0) scale(1.08);
   will-change: transform;
+}
+#bg-stack::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55));
   pointer-events: none;
 }
+.bg-frame {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+  filter: saturate(110%);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.bg-frame.is-active { opacity: 1; }
 
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }

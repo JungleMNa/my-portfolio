@@ -45,6 +45,66 @@ if (toggle && nav && navMenu) {
   document.addEventListener('pointermove', onMove, { passive: true });
 })();
 
+// Background image rotation every 30s with fade
+(() => {
+  const bgStack = document.getElementById('bg-stack');
+  if (!bgStack) return;
+
+  const images = [
+    'BMW_M_Wallpaper_3.0_CSL_rear_Desktop.jpg',
+    '683213.jpg',
+    'cem-gurbuz-kaan-soloturk-b.jpg'
+  ].filter(Boolean);
+
+  if (!images.length) return;
+
+  let index = Math.floor(Math.random() * images.length);
+  let currentFrame = null;
+
+  const createFrame = (src, { immediate = false, onActivate } = {}) => {
+    const frame = document.createElement('div');
+    frame.className = 'bg-frame';
+    frame.style.backgroundImage = `url('${src}')`;
+    bgStack.appendChild(frame);
+    const activate = () => {
+      requestAnimationFrame(() => {
+        frame.classList.add('is-active');
+        onActivate?.(frame);
+      });
+    };
+
+    if (immediate) {
+      activate();
+    } else {
+      const img = new Image();
+      img.onload = activate;
+      img.src = src;
+    }
+
+    return frame;
+  };
+
+  const advance = () => {
+    const nextIndex = (index + 1) % images.length;
+    let nextFrame = null;
+    nextFrame = createFrame(images[nextIndex], {
+      onActivate: (frame) => {
+        if (currentFrame && currentFrame !== frame) {
+          const prevFrame = currentFrame;
+          prevFrame.classList.remove('is-active');
+          prevFrame.addEventListener('transitionend', () => prevFrame.remove(), { once: true });
+        }
+        currentFrame = frame;
+        index = nextIndex;
+      }
+    });
+  };
+
+  currentFrame = createFrame(images[index], { immediate: true });
+
+  setInterval(advance, 20000);
+})();
+
 // Fallback: copy email to clipboard on click (in case mail client isn't configured)
 const emailCta = document.getElementById('email-cta');
 if (emailCta) {
